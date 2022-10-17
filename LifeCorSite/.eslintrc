@@ -1,0 +1,7 @@
+{
+  "plugins": ["styled"],
+  "rules": {
+    "styled/require-macro": [2],
+    "styled/unused-macro": [2]
+  }
+}

@@ -1,0 +1,18 @@
+export const images = [
+  { src: "/img/foto (1).jpg" },
+  { src: "/img/foto (2).jpg" },
+  { src: "/img/foto (3).jpg" },
+  { src: "/img/foto (4).jpg" },
+  { src: "/img/foto (5).jpg" },
+  { src: "/img/foto (6).jpg" },
+  { src: "/img/foto (7).jpg" },
+  { src: "/img/foto (8).jpg" },
+  { src: "/img/foto (9).jpg" },
+  { src: "/img/foto (10).jpg" },
+  { src: "/img/foto (11).jpg" },
+  { src: "/img/foto (12).jpg" },
+  { src: "/img/foto (13).jpg" },
+  { src: "/img/foto (14).jpg" },
+  { src: "/img/foto (15).jpg" },
+  { src: "/img/foto (16).jpg" },
+];

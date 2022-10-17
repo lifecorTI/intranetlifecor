@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String       @id @default(uuid())
+  name       String
+  isAdmin    Boolean
+  password   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+  Patient    Patient[]
+  Sales      Sales[]
+  Procedures Procedures[]
+}
+
+model Patient {
+  id           String   @id @default(uuid())
+  name         String
+  birthDate    DateTime
+  phone        String?
+  sex          String
+  cpf          String?  @unique
+  rg           String?
+  address      String?
+  houseNumber  Int?
+  district     String?
+  agreement    String
+  city         String
+  municipality String
+  motherName   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  User       User         @relation(fields: [userId], references: [id])
+  userId     String
+  Sales      Sales[]
+  Procedures Procedures[]
+}
+
+model Procedures {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  Patient   Patient @relation(fields: [patientId], references: [id])
+  patientId String
+  Doctor    Doctor  @relation(fields: [doctorId], references: [id])
+  doctorId  String
+  User      User    @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model Doctor {
+  id             String       @id @default(uuid())
+  name           String
+  specialization String
+  location       String
+  Procedures     Procedures[]
+}
+
+model Provider {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  Product   Product[]
+}
+
+model Category {
+  id      String    @id @default(uuid())
+  name    String
+  Product Product[]
+}
+
+model Product {
+  id         String  @id @default(uuid())
+  name       String
+  length     String?
+  price      Float
+  pricePt    Float
+  isCosigned Boolean
+
+  Provider     Provider?      @relation(fields: [providerId], references: [id])
+  providerId   String?
+  Category     Category?      @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+  ProductSales ProductSales[]
+  Lot          Lot[]
+}
+
+model Lot {
+  id        String   @id @default(uuid())
+  name      String
+  dueDate   DateTime
+  qtd       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  Product   Product     @relation(fields: [productId], references: [id])
+  productId String
+}
+
+
+
+model Sales {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  User         User           @relation(fields: [userId], references: [id])
+  userId       String
+  Patient      Patient        @relation(fields: [patientId], references: [id])
+  patientId    String
+  ProductSales ProductSales[]
+}
+
+model ProductSales {
+  id  String @id @default(uuid())
+  qtd Int
+
+  Product   Product @relation(fields: [productId], references: [id])
+  productId String
+  Sales     Sales   @relation(fields: [salesId], references: [id])
+  salesId   String
+}
