@@ -1,60 +1,53 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { log } from "console";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import Header from "../../../components/header";
-
-import SideBar from "../../../components/sideBar";
 import { apiGet, apiPost } from "../../../service/api";
+import { formatDateJStoDistance } from "../../../utils/formatDateJStoDistance";
 import {
   ICategory,
   ICreateProductWithLot,
-  IProduct,
   IResponseProvider,
 } from "./interface";
 
 function CreateProduct() {
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<ICreateProductWithLot[]>([]);
   const [enabled, setEnabled] = useState(false);
   const [provider, setProvider] = useState<IResponseProvider[]>([]);
   const [category, setCategory] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(false);
   const productSchema = Yup.object().shape({
     name: Yup.string().required(),
+    ref: Yup.string().required(),
     length: Yup.string().required(),
     price: Yup.number().required(),
     pricePt: Yup.number().required(),
     categoryId: Yup.string().required(),
-    isConsigned: Yup.boolean().required(),
+    isCosigned: Yup.boolean().required(),
     providerId: Yup.string().required(),
-    algo: Yup.array(),
-    lot: Yup.object().shape({
-      name: Yup.string().required(),
-      dueDate: Yup.date().required(),
-      qtd: Yup.number().required(),
-    }),
+    lot: Yup.array(
+      Yup.object().shape({
+        name: Yup.string().required(),
+        dueDate: Yup.date().required(),
+        qtd: Yup.number().required(),
+      })
+    ),
   });
 
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<ICreateProductWithLot>({ resolver: yupResolver(productSchema) });
 
-  useEffect(() => {
-    const res = async () => {
-      await apiGet("/products")
-        .then((res) => {
-          setProducts(res);
-        })
-        .catch((err) => toast.error(err.message));
-    };
-
-    res();
-  }, [loading == false]);
+  const { fields, append, remove } = useFieldArray({
+    name: "lot",
+    control,
+  });
 
   useEffect(() => {
     const res = async () => {
@@ -80,70 +73,79 @@ function CreateProduct() {
     res();
   }, []);
 
-  const handleCreateProduct = async (data: ICreateProductWithLot) => {
+  async function handleSubmitProduct(data: ICreateProductWithLot) {
     setLoading(true);
+    const productExists = products.filter(
+      (p) => p.name.match(data.name) && p.length.match(data.length)
+    );
+
+    if (productExists.length > 0) {
+      setLoading(false);
+      return toast.error("product já foi para cadastro");
+    }
+
     await apiPost("/product", data)
       .then((res) => {
+        if (res.message === "product already registered!") {
+          return toast.error("produto já registrado no banco de dados");
+        }
+        reset({
+          length: "",
+          lot: [],
+          name: "",
+          price: 0,
+          pricePt: 0,
+          isCosigned: false,
+        });
+        setProducts([...products, data]);
         toast.success(res.message);
-        reset({ name: "", lot: { name: "", qtd: 0 } });
       })
+
       .catch((err) => {
         toast.error(err.message);
       });
     setLoading(false);
-  };
+  }
 
   return (
-    <div className="flex w-full min-h-screen  flex-col">
+    <div className="flex w-full h-full flex-col bg-white bg-opacity-60 overflow-auto">
       <Header />
-      <div className="flex w-full">
-        <div className="bg-white w-full flex p-10 flex-col gap-10">
+      <div className="flex w-full h-full">
+        <div className="flex p-5 gap-10">
           <form
             className="flex flex-col w-full gap-4 items-center"
-            onSubmit={handleSubmit(handleCreateProduct)}
+            onSubmit={handleSubmit(handleSubmitProduct)}
           >
+            {" "}
             <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+              className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+              type="text"
+              {...register("ref")}
+              placeholder="refefência"
+            />
+            <input
+              className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
               type="text"
               {...register("name")}
               placeholder="Nome do produto"
             />
             <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+              className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
               type="text"
               {...register("length")}
               placeholder="Tamanho: 2.00x20 | 7F | null"
             />
             <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+              className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
               type="number"
               {...register("price")}
               placeholder="Preço SUS"
             />
             <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+              className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
               type="number"
               {...register("pricePt")}
               placeholder="Preço Particular"
-            />
-            {errors.lot?.name?.message}
-            <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
-              type="text"
-              {...register("lot.name")}
-              placeholder="Lote"
-            />
-            <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
-              type="date"
-              {...register("lot.dueDate")}
-              placeholder="Vencimento"
-            />
-            <input
-              className="bg-slate-400 text-white placeholder:text-gray-300 pl-5 rounded-sm"
-              type="number"
-              {...register("lot.qtd")}
-              placeholder="qtd"
             />
             <div className="flex gap-2">
               <span>Consignado: </span>
@@ -151,7 +153,7 @@ function CreateProduct() {
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  {...register("isConsigned")}
+                  {...register("isCosigned")}
                 />
                 <div
                   onClick={() => {
@@ -162,7 +164,7 @@ function CreateProduct() {
               </label>
             </div>
             <select
-              className="bg-slate-500 text-white rounded-lg px-3"
+              className="bg-slate-700 text-white rounded-lg px-3"
               {...register("providerId")}
             >
               {provider.map((p) => {
@@ -174,7 +176,7 @@ function CreateProduct() {
               })}
             </select>
             <select
-              className="bg-slate-500 text-white rounded-lg px-3"
+              className="bg-slate-700 text-white rounded-lg px-3"
               {...register("categoryId")}
             >
               {category.map((c) => {
@@ -185,117 +187,123 @@ function CreateProduct() {
                 );
               })}
             </select>
+            <div className="flex flex-col w-full gap-5 h-full overflow-auto">
+              <ul className=" flex flex-col h-full gap-3 overflow-auto">
+                {fields.map((item, index) => (
+                  <li
+                    key={item.id}
+                    className="flex  flex-col gap-3  bg-white p-2 rounded-md"
+                  >
+                    <label htmlFor="name">
+                      lote
+                      <Controller
+                        render={({ field }) => (
+                          <input
+                            className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+                            {...field}
+                          />
+                        )}
+                        name={`lot.${index}.name`}
+                        control={control}
+                      />
+                    </label>
+                    <label htmlFor="qtd">
+                      quantidade
+                      <Controller
+                        render={({ field }) => (
+                          <input
+                            className="bg-slate-700 text-white placeholder:text-gray-300 pl-5 rounded-sm"
+                            {...field}
+                          />
+                        )}
+                        name={`lot.${index}.qtd`}
+                        control={control}
+                      />
+                    </label>
+                    <label htmlFor="dueDate">
+                      vencimento
+                      <Controller
+                        render={({ field }) => (
+                          <input
+                            className="bg-slate-700 text-white w-full placeholder:text-gray-300 pl-5 rounded-sm"
+                            type="date"
+                            {...field}
+                          />
+                        )}
+                        name={`lot.${index}.dueDate`}
+                        control={control}
+                      />
+                    </label>
+                    <button type="button" onClick={() => remove(index)}>
+                      Delete
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                className="bg-fuchsia-500 rounded-md text-white"
+                type="button"
+                onClick={() =>
+                  append({
+                    name: "nome do lote",
+                    qtd: 1,
+                    dueDate: new Date().toLocaleString("pt-br"),
+                  })
+                }
+              >
+                Adiconar novo lote
+              </button>
+            </div>
             <button className="bg-green-400 w-28 items-center rounded-lg text-white">
-              Cadastrar
+              adicionar
             </button>
           </form>
-          <div className="w-full bg-slate-400 p-10 overflow-hidden">
-            <table className="w-full">
-              <thead className="border-b">
-                <tr>
-                  <th
-                    scope="col"
-                    className="w-40 text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
+        </div>
+        <div className="bg-black bg-opacity-60 w-full flex flex-col p-5">
+          <h1 className="text-white text-center text-4xl">
+            Produtos cadastrados
+          </h1>
+          <ul className="flex flex-col gap-3">
+            {products.length > 0 ? (
+              products.map((p, i) => {
+                return (
+                  <li
+                    key={i}
+                    className="flex w-full justify-between items-center bg-white bg-opacity-60 p-2 rounded-lg"
                   >
-                    nome
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
-                  >
-                    tamanho
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
-                  >
-                    consignado?
-                  </th>{" "}
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
-                  >
-                    lote
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
-                  >
-                    vencimento
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left border-r"
-                  >
-                    qtd
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => {
-                  return (
-                    <tr key={product.id}>
-                      <td className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b">
-                        {product.name}
-                      </td>
-                      <td className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b">
-                        {product.length}
-                      </td>
-                      <td className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b">
-                        {product.isConsigned ? "consignado" : "comprado"}
-                      </td>
-
-                      <td>
-                        <ul>
-                          {product.Lot.map((l) => {
-                            return (
-                              <li
-                                key={l.id}
-                                className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b "
-                              >
-                                {l.name}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </td>
-                      <td>
-                        <ul>
-                          {product.Lot.map((l) => {
-                            const dueDate = new Date(
-                              l.dueDate
-                            ).toLocaleDateString("pt-br");
-                            return (
-                              <li
-                                key={l.id}
-                                className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b"
-                              >
-                                {dueDate}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </td>
-                      <td>
-                        <ul>
-                          {product.Lot.map((l) => {
-                            return (
-                              <li
-                                key={l.id}
-                                className="text-sm text-gray-900 font-light px-6 py-4  border-r border-b"
-                              >
-                                {l.qtd}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    <p>
+                      {p.ref} - {p.name} - {p.length}
+                    </p>
+                    <span>{p.isCosigned ? "Consegnado" : "Comprado"}</span>
+                    <div className="flex flex-col items-center justify-center">
+                      {p.lot.map((lot, i) => {
+                        return (
+                          <div key={i} className="flex gap-2 items-center">
+                            <div className="flex gap-2 mt-1 bg-green-300  px-4 rounded-md">
+                              <p>lote: {lot.name} -&gt;</p>
+                              <p>{lot.qtd} und</p>
+                            </div>
+                            <div>
+                              vencimento: {formatDateJStoDistance(lot.dueDate)}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div>
+                      <p>SUS: R$ {p.price}</p> <p>PT: R$ {p.pricePt}</p>
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <>
+                <div className="text-white w-full items-center justify-center flex">
+                  <span>SUA LISTA ESTÁ VAZIA</span>
+                </div>
+              </>
+            )}
+          </ul>
         </div>
       </div>
     </div>

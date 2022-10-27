@@ -11,7 +11,7 @@ function Header() {
     navigate("/home");
   }
   return (
-    <header className="w-full bg-white bg-opacity-60 h-[6%] flex justify-between items-center p-3">
+    <header className="w-full bg-white bg-opacity-60 flex justify-between items-center p-3">
       <span className="text-lg flex gap-3 ">
         {" "}
         <HouseSimple

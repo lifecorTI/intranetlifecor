@@ -9,35 +9,32 @@ export interface IResponseProvider {
 
 export interface ICreateProductWithLot {
   name: string;
+  ref: string;
   length: string;
   price: number;
   pricePt: number;
-  isConsigned: boolean;
+  isCosigned: boolean;
   categoryId: string;
   providerId: string;
-  lot: {
-    name: string;
-    dueDate: Date;
-    qtd: number;
-  };
+  lot: lot[];
 }
 
-interface Lot {
-  id: string;
+interface lot {
   name: string;
-  dueDate: Date;
+  dueDate: string;
   qtd: number;
 }
 
 export interface IProduct {
   id: string;
+  ref: string;
   name: string;
   length: string;
   price: number;
   pricePt: number;
-  isConsigned: boolean;
+  isCosigned: boolean;
   categoryId: string;
-  Lot: Lot[];
+  lot: lot[];
 }
 
 export interface ICategory {

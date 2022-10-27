@@ -33,14 +33,15 @@ function PatientCreateModal({ show, setShow }: IProps) {
       cpf: Yup.string().max(11).min(11),
       rg: Yup.string(),
       motherName: Yup.string(),
-      address: Yup.string().notRequired(),
-      houseNumber: Yup.number().notRequired(),
+      address: Yup.string(),
+      houseNumber: Yup.number(),
       district: Yup.string(),
       agreement: Yup.string().required("Convênio obrigatório"),
       city: Yup.string().required(),
-      municipality: Yup.string(),
+      municipality: Yup.string().required(),
       userId: Yup.string(),
     }),
+    origin: Yup.string().required(),
     name: Yup.string(),
     doctorId: Yup.string().required(),
   });
@@ -59,11 +60,11 @@ function PatientCreateModal({ show, setShow }: IProps) {
 
     navigate("/home");
     setShow(!show);
-    reset({ ...register });
+    reset();
     toast(res.message);
   }
   return show ? (
-    <div className="absolute bg-stone-200 bg-opacity-60  backdrop-blur w-full p-10 z-50 flex items-center justify-center flex-col overflow-y-auto mb-7 ">
+    <div className="absolute bg-stone-200 bg-opacity-60  backdrop-blur w-full h-full p-10 z-50 flex items-center justify-center flex-col overflow-y-auto mb-7 ">
       <button
         className="flex absolute right-5 top-5"
         onClick={() => setShow(!show)}
@@ -81,7 +82,6 @@ function PatientCreateModal({ show, setShow }: IProps) {
           </label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white "
-            type="text"
             {...register("patient.name")}
             placeholder="Nome"
           />
@@ -95,7 +95,6 @@ function PatientCreateModal({ show, setShow }: IProps) {
           <label htmlFor="">telefone</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.phone")}
             placeholder="somente números"
           />
@@ -130,27 +129,24 @@ function PatientCreateModal({ show, setShow }: IProps) {
           <label htmlFor="">CPF</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
+            maxLength={11}
             {...register("patient.cpf")}
             placeholder="somente números"
           />
           <label htmlFor="">RG</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.rg")}
             placeholder="somente números"
           />
           <label htmlFor="">Nome da mãe</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.motherName")}
             placeholder="dita cuja"
           />
           <input
             className="hidden"
-            type="text"
             value={user.id}
             {...register("patient.userId")}
           />
@@ -160,35 +156,31 @@ function PatientCreateModal({ show, setShow }: IProps) {
           <label htmlFor="">Rua</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.address")}
             placeholder="Nome da rua"
           />
           <label htmlFor="">Bairro</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.district")}
             placeholder="Nome do bairro"
           />
           <label htmlFor="">Numero</label>
+          {errors.patient?.houseNumber?.message}
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="number"
             {...register("patient.houseNumber")}
             placeholder="somente números"
           />
           <label htmlFor="">Cidade</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.city")}
             placeholder="Boa vista"
           />
           <label htmlFor="">Municipío</label>
           <input
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
-            type="text"
             {...register("patient.municipality")}
             placeholder="Roraima"
           />
@@ -213,10 +205,22 @@ function PatientCreateModal({ show, setShow }: IProps) {
             className="bg-neutral-600 border rounded-lg pl-4 text-white"
             {...register("name")}
           >
-            <option value="CATETERISMO">Cateterismo Cardiaco</option>
-            <option value="ANGIOPLASTIA">Angioplastia Cardiaca</option>
-            <option value="ANGIOPLASTIA">Artériografia Cerebral</option>
-          </select>{" "}
+            <option value="Cateterismo Cardiaco">Cateterismo Cardiaco</option>
+            <option value="Angioplastia Cardiaca">Angioplastia Cardiaca</option>
+            <option value="Artériografia Cerebral">
+              Artériografia Cerebral
+            </option>
+          </select>
+          <label>Origem</label>
+          <select
+            className="bg-neutral-600 border rounded-lg pl-4 text-white"
+            {...register("origin")}
+          >
+            <option value="HC">HC</option>
+            <option value="SUS">SUS</option>
+
+            <option value="EXT.">EXT.</option>
+          </select>
           <button
             className="bg-green-600 p-2 rounded-xl mt-20  text-white"
             type="submit"

@@ -1,4 +1,4 @@
-interface Lot {
+interface lot {
   id: string;
   name: string;
   dueDate: Date;
@@ -7,11 +7,12 @@ interface Lot {
 export interface IProduct {
   id: string;
   name: string;
+  ref: string;
   price: number;
   pricePt: number;
   providerId: string;
   categoryId: string;
   length: string;
-  isConsigned: boolean;
-  Lot: Lot[];
+  isCosigned: boolean;
+  lot: lot[];
 }

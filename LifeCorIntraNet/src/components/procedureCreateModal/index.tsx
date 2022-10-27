@@ -17,6 +17,7 @@ function ProcedureCreateModal({ setShow, show, patientId }: IProps) {
   const schemaPatient = Yup.object().shape({
     name: Yup.string().required(),
     doctorId: Yup.string().required(),
+    origin: Yup.string().required(),
     userId: Yup.string().required(),
     patientId: Yup.string().required(),
   });
@@ -87,6 +88,15 @@ function ProcedureCreateModal({ setShow, show, patientId }: IProps) {
             <option value="Artériografia Cerebral">
               Artériografia Cerebral
             </option>
+          </select>{" "}
+          <label htmlFor="">Origem</label>
+          <select
+            className="bg-neutral-600 border rounded-lg pl-4 text-white"
+            {...register("origin")}
+          >
+            <option value="SUS">SUS</option>
+            <option value="HC">HC</option>
+            <option value="EXT">EXT</option>
           </select>
           <input
             className="hidden"

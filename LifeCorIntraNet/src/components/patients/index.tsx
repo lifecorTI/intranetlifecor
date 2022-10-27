@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { apiGet } from "../../service/api";
 
 import { PlusCircle } from "phosphor-react";
 import PatientCreateModal from "../patientCreateModal";
 import { IPatient } from "./interface";
+import { authContext } from "../../context/auth/authContext";
 
 function Patient() {
   const [patient, setPatient] = useState<IPatient[]>([]);
   const [show, setShow] = useState(false);
+  const { errorToken } = useContext(authContext);
 
   useEffect(() => {
     const res = async () => {
       const patients = await apiGet("/patients");
+
       setPatient(patients);
     };
     res();

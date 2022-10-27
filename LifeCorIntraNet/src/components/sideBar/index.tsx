@@ -35,9 +35,8 @@ function SideBar() {
               <a href="/createProvider">fornecedor</a>
               <a href="/createProduct">produtos</a>
               <a href="/listProduct">listar produtos</a>
-              <a href="/sales">vender</a>
-              <li>produtos usados</li>
-              <li>editar</li>
+              <a href="/listProductSales">listar produtos vendidos</a>
+              <a href="/listProductByPatient">listar produtos por paciente</a>
             </ul>
           </aside>
         </MenuList>

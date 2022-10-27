@@ -25,52 +25,51 @@ class ProcedurePDF extends React.Component<{
                 <strong className="font-black">{props?.name}</strong>
               </p>
               <p>
-                ORIGEM:{" "}
-                <strong className="font-black">{props?.Doctor.location}</strong>
+                ORIGEM: <strong className="font-black">{props?.origin}</strong>
               </p>
             </div>
             <div className="flex justify-between ">
               <p>
                 NOME:{" "}
-                <strong className="font-black">{props?.Patient.name}</strong>
+                <strong className="font-black">{props?.patient.name}</strong>
               </p>
               <p>
                 IDADE:{" "}
-                <strong className="font-black">{props?.Patient.age}A</strong>
+                <strong className="font-black">{props?.patient.age}A</strong>
               </p>
             </div>
             <div className="flex justify-between ">
               <p>
                 CONVÊNIO:{" "}
                 <strong className="font-black">
-                  {props?.Patient.agreement}
+                  {props?.patient.agreement}
                 </strong>
               </p>
               <p>
                 NASCIMENTO:{" "}
                 <strong className="font-black">
-                  {props?.Patient.birthDate}
+                  {props?.patient.birthDate}
                 </strong>
               </p>
             </div>
             <div className="flex justify-between ">
               <p>
                 CPF:{" "}
-                <strong className="font-black">{props?.Patient.cpf}</strong>
+                <strong className="font-black">{props?.patient.cpf}</strong>
               </p>
               <p>
-                RG: <strong className="font-black">{props?.Patient.rg}</strong>
+                RG: <strong className="font-black">{props?.patient.rg}</strong>
               </p>
             </div>
             <div className="flex justify-between ">
               <p>
                 END:{" "}
-                <strong className="font-black">{props?.Patient.address}</strong>
+                <strong className="font-black">{props?.patient.address}</strong>
               </p>
               <p>
                 N°:{" "}
                 <strong className="font-black">
-                  {props?.Patient.houseNumber}
+                  {props?.patient.houseNumber}
                 </strong>
               </p>
             </div>{" "}
@@ -78,17 +77,17 @@ class ProcedurePDF extends React.Component<{
               <p>
                 BAIRRO:{" "}
                 <strong className="font-black">
-                  {props?.Patient.district}
+                  {props?.patient.district}
                 </strong>
               </p>
               <p>
                 CIDADE:{" "}
-                <strong className="font-black">{props?.Patient.city}</strong>
+                <strong className="font-black">{props?.patient.city}</strong>
               </p>{" "}
               <p>
                 ESTADO:{" "}
                 <strong className="font-black">
-                  {props?.Patient.municipality}
+                  {props?.patient.municipality}
                 </strong>
               </p>
             </div>{" "}
@@ -96,12 +95,12 @@ class ProcedurePDF extends React.Component<{
               <p>
                 NOME DA MÃE:{" "}
                 <strong className="font-black">
-                  {props?.Patient.motherName}
+                  {props?.patient.motherName}
                 </strong>
               </p>{" "}
               <p>
                 MEDICO SOLICITANTE:{" "}
-                <strong className="font-black">{props?.Doctor.name}</strong>
+                <strong className="font-black">{props?.doctor.name}</strong>
               </p>
             </div>{" "}
             <div>

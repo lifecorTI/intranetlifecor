@@ -9,4 +9,5 @@ export interface ICreateProcedure {
   doctorId: string;
   userId: string;
   patientId: string;
+  origin: string;
 }

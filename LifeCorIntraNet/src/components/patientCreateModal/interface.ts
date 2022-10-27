@@ -11,10 +11,12 @@ export interface ICreatePatientWithProcedure {
   patient: IPatient;
   doctorId: string;
   name: string;
+  origin: string;
 }
 
-export interface IResponsePatientWithProcedure extends ICreatePatientWithProcedure {
-  id: string
+export interface IResponsePatientWithProcedure
+  extends ICreatePatientWithProcedure {
+  id: string;
 }
 
 export interface IProps {

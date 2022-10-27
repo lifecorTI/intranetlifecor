@@ -2,16 +2,17 @@ export interface IResponseProcedure {
   id: string;
   createdAt: Date;
   doctorId: string;
+  origin: string;
   name: string;
   patientId: string;
   userId: string;
-  Doctor: {
+  doctor: {
     id: string;
     location: string;
     name: string;
     specialization: string;
   };
-  Patient: {
+  patient: {
     address: string;
     agreement: string;
     birthDate: string;

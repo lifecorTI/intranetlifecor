@@ -1,37 +1,54 @@
 export interface IProcedures {
   id: string;
   doctorId: string;
-  doctor: IDoctor;
   name: string;
   origin: string;
   patientId: string;
   userId: string;
   createdAt: Date;
   updateAt: Date;
+  sales: ISales[];
 }
 
-export interface IDoctor {
-  id: string;
+interface product {
   name: string;
-  specialization: string;
-  location: string;
+  isCosigned: boolean;
+  price: number;
+  pricePt: number;
+  ref: string;
+  length: string;
+}
+
+interface lot {
+  id: string;
+  dueDate: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  product: product;
+}
+
+interface productSales {
+  id: string;
+  lotId: string;
+  productId: string;
+  qtd: number;
+  salesId: string;
+  lot: lot;
 }
 
 export interface ISales {
   id: string;
   userId: string;
   patentId: string;
+  productSales: productSales[];
   proceduresId: string;
   updatedAt: number;
   createdAt: string;
-  _count: {
-    productSales: string;
-  };
 }
 
 export interface IResPatient {
   Procedures: IProcedures[];
-  Sales: ISales[];
   id: string;
   name: string;
   birthDate: Date;
