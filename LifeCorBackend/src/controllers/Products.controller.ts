@@ -21,6 +21,26 @@ class Products {
 
     res.status(200).json(data);
   }
+
+  async findOne(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const productsService = new ProductsService();
+
+    const data = await productsService.findOne(id);
+
+    return res.json(data);
+  }
+
+  async update(req: Request, res: Response) {
+    const data = req.body;
+
+    const productsService = new ProductsService();
+
+    const update = await productsService.update(data);
+
+    return res.json(update);
+  }
 }
 
 export { Products };

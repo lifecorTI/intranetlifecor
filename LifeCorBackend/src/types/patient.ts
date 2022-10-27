@@ -18,5 +18,6 @@ export interface IPatient {
 export interface ICreatePatientWithProcedure {
   patient: IPatient;
   name: string;
+  origin: string;
   doctorId: string;
 }

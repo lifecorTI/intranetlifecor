@@ -1,9 +1,9 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 
 class DoctorService {
   async create(name: string, specialization: string, location: string) {
-    const doctorExists = await prismaClient.doctor.findFirst({
+    const doctorExists = await prisma.doctor.findFirst({
       where: {
         name,
       },
@@ -13,7 +13,7 @@ class DoctorService {
       throw new AppError("Doctor already exists", 409);
     }
 
-    const data = await prismaClient.doctor.create({
+    const data = await prisma.doctor.create({
       data: {
         name: name,
         specialization: specialization,
@@ -25,7 +25,7 @@ class DoctorService {
   }
 
   async findMany() {
-    const doctors = await prismaClient.doctor.findMany();
+    const doctors = await prisma.doctor.findMany();
 
     return doctors;
   }

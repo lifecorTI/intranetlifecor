@@ -1,29 +1,33 @@
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 import { ICreateUser } from "../types/user";
-import bcryptjs from "bcryptjs";
+import bcryptjs, { hash } from "bcryptjs";
 import { AppError } from "../errors/AppError";
 
 class UserService {
-  async createService({ name, password, isAdmin = false }: ICreateUser) {
-    const user = {
-      name: name,
-      password: await bcryptjs.hash(password, 10),
-      isAdmin: isAdmin || false,
-    };
-
-    const userExists = await prismaClient.user.findFirst({
+  async create({ name, password, isAdmin = false }: ICreateUser) {
+    const userExists = await prisma.user.findFirst({
       where: {
         name,
       },
     });
 
     if (userExists) {
-      throw new AppError("User already exists", 404);
+      throw new AppError("User already exists", 409);
     }
 
-    const userData = await prismaClient.user.create({ data: user });
+    const userData = await prisma.user.create({
+      data: {
+        name: name,
+        password: await hash(password, 10),
+        isAdmin: isAdmin,
+      },
+    });
 
-    return `user created ${userData.name}`;
+    const useRes = (userData: any) => {
+      const { password, isAdmin, ...rest } = userData;
+      return rest;
+    };
+    return useRes(userData);
   }
 }
 

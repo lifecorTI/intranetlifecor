@@ -1,6 +1,10 @@
 export interface ILotCreate {
-  productId: string;
+  lot: { productId: string; name: string; dueDate: Date; qtd: number }[];
+}
+
+export interface ILotResponse {
   name: string;
-  dueDate: Date;
+  id: string;
+  dueDate: string;
   qtd: number;
 }

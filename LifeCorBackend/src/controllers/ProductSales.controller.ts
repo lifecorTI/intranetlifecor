@@ -10,6 +10,14 @@ class ProductSales {
 
     return res.status(201).json({ message: "successful sale", productSales });
   }
+
+  async findMany(req: Request, res: Response) {
+    const productSalesService = new ProductSalesService();
+
+    const data = await productSalesService.findMany();
+
+    return res.json(data);
+  }
 }
 
 export { ProductSales };

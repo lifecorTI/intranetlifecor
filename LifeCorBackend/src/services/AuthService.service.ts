@@ -1,11 +1,11 @@
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 import { ISessionUser } from "../types/user";
 
 class AuthService {
   async execute({ name, password }: ISessionUser) {
-    const user = await prismaClient.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         name,
       },

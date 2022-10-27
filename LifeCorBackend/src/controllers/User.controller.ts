@@ -6,7 +6,7 @@ class User {
     const userService = new UserService();
     const { name, password, isAdmin } = req.body;
 
-    const user = await userService.createService({ name, password, isAdmin });
+    const user = await userService.create({ name, password, isAdmin });
 
     return res.status(201).json(user);
   }

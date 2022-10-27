@@ -1,43 +1,36 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma/index";
+import { prisma } from "../prisma";
 import { IProductsSales, IProductsData } from "../types/productSales";
 
 class ProductSalesService {
   async create(data: IProductsData) {
-    const arrayData = data;
-
-    const ids = arrayData.map((p: IProductsSales) => p.productId);
-    const lot = await prismaClient.lot.findMany({
+    const ids = data.map((p: IProductsSales) => p.productId);
+    const lot = await prisma.lot.findMany({
       where: {
         productId: { in: ids },
       },
       include: {
-        Product: true,
+        product: true,
       },
     });
-
     const productsHaveLot = ids.map((id) =>
       lot.find((p) => p.productId === id)
     );
-
     if (productsHaveLot.includes(undefined)) {
       throw new AppError("Product no have a lot", 404);
     }
-
     data.map((d, i) => {
       if (!(d.qtd <= lot[i].qtd)) {
         throw new AppError(
-          `the product ${lot[i].Product.name} ${lot[i].Product.length} does not have enough quantity`
+          `the product ${lot[i]} ${lot[i].name} does not have enough quantity`
         );
       }
     });
-
     lot.map(async (l) => {
       data.map(async (d) => {
         if (l.productId === d.productId) {
           const updateValue = l.qtd - d.qtd;
-
-          await prismaClient.lot.update({
+          await prisma.lot.update({
             where: {
               id: l.id,
             },
@@ -50,10 +43,25 @@ class ProductSalesService {
       });
     });
 
-    const productSales = await prismaClient.productSales.createMany({
+    const productSales = await prisma.productSales.createMany({
       data: data,
     });
     return productSales;
+  }
+
+  async findMany() {
+    const data = await prisma.productSales.findMany({
+      include: {
+        product: true,
+        lot: true,
+        sales: {
+          include: {
+            patient: true,
+          },
+        },
+      },
+    });
+    return data;
   }
 }
 

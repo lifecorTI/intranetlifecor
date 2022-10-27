@@ -4,13 +4,14 @@ import { ProceduresService } from "../services/Procedures.service";
 class Procedures {
   async create(req: Request, res: Response) {
     const proceduresService = new ProceduresService();
-    const { name, patientId, doctorId, userId } = req.body;
+    const { name, patientId, doctorId, userId, origin } = req.body;
 
     const data = await proceduresService.create(
       name,
       doctorId,
       patientId,
-      userId
+      userId,
+      origin
     );
 
     return res

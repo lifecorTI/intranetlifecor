@@ -1,19 +1,19 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 import { ICreatePatientWithProcedure } from "../types/patient";
 import { dateFormatterPTBRtoJS } from "../utils/dateFormatterPTBRtoJS";
 
 class PatientService {
   async create(patient: ICreatePatientWithProcedure) {
-    const nameExists = await prismaClient.patient.findFirst({
-      where: { cpf: patient.patient.cpf },
+    const nameExists = await prisma.patient.findFirst({
+      where: { name: patient.patient.name, cpf: patient.patient.cpf },
     });
 
     if (nameExists) {
       throw new AppError("Patient already exists", 409);
     }
 
-    const data = await prismaClient.patient.create({
+    const data = await prisma.patient.create({
       data: {
         name: patient.patient.name,
         birthDate: dateFormatterPTBRtoJS(patient.patient.birthDate),
@@ -34,6 +34,7 @@ class PatientService {
             name: patient.name,
             doctorId: patient.doctorId,
             userId: patient.patient.userId,
+            origin: patient.origin,
           },
         },
       },
@@ -42,9 +43,28 @@ class PatientService {
   }
 
   async findAll() {
-    const data = await prismaClient.patient.findMany({
+    const data = await prisma.patient.findMany({
       orderBy: {
         createdAt: "desc",
+      },
+      include: {
+        Procedures: {
+          include: {
+            sales: {
+              include: {
+                productSales: {
+                  include: {
+                    lot: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -52,20 +72,20 @@ class PatientService {
   }
 
   async findOne(id: string) {
-    const data = await prismaClient.patient.findFirst({
+    const data = await prisma.patient.findFirst({
       where: {
         id,
       },
       include: {
         Procedures: {
+          orderBy: {
+            createdAt: "desc",
+          },
           include: {
-            Doctor: true,
+            doctor: true,
           },
         },
         Sales: true,
-      },
-      orderBy: {
-        createdAt: "desc",
       },
     });
 

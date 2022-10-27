@@ -4,8 +4,8 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "isAdmin" BOOLEAN NOT NULL,
     "password" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -25,8 +25,9 @@ CREATE TABLE "Patient" (
     "agreement" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "municipality" TEXT NOT NULL,
+    "motherName" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Patient_pkey" PRIMARY KEY ("id")
@@ -36,7 +37,8 @@ CREATE TABLE "Patient" (
 CREATE TABLE "Procedures" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "CreatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "origin" TEXT NOT NULL,
     "patientId" TEXT NOT NULL,
     "doctorId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -61,7 +63,7 @@ CREATE TABLE "Provider" (
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Provider_pkey" PRIMARY KEY ("id")
 );
@@ -78,6 +80,7 @@ CREATE TABLE "Category" (
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "ref" TEXT NOT NULL,
     "length" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "pricePt" DOUBLE PRECISION NOT NULL,
@@ -95,30 +98,20 @@ CREATE TABLE "Lot" (
     "dueDate" TIMESTAMP(3) NOT NULL,
     "qtd" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "productId" TEXT NOT NULL,
 
     CONSTRAINT "Lot_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Inventory" (
-    "id" TEXT NOT NULL,
-    "qtd" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "lotId" TEXT NOT NULL,
-
-    CONSTRAINT "Inventory_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Sales" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
     "patientId" TEXT NOT NULL,
+    "proceduresId" TEXT NOT NULL,
 
     CONSTRAINT "Sales_pkey" PRIMARY KEY ("id")
 );
@@ -129,6 +122,7 @@ CREATE TABLE "ProductSales" (
     "qtd" INTEGER NOT NULL,
     "productId" TEXT NOT NULL,
     "salesId" TEXT NOT NULL,
+    "lotId" TEXT NOT NULL,
 
     CONSTRAINT "ProductSales_pkey" PRIMARY KEY ("id")
 );
@@ -158,16 +152,19 @@ ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("cat
 ALTER TABLE "Lot" ADD CONSTRAINT "Lot_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_lotId_fkey" FOREIGN KEY ("lotId") REFERENCES "Lot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_patientId_fkey" FOREIGN KEY ("patientId") REFERENCES "Patient"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Sales" ADD CONSTRAINT "Sales_proceduresId_fkey" FOREIGN KEY ("proceduresId") REFERENCES "Procedures"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ProductSales" ADD CONSTRAINT "ProductSales_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductSales" ADD CONSTRAINT "ProductSales_salesId_fkey" FOREIGN KEY ("salesId") REFERENCES "Sales"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductSales" ADD CONSTRAINT "ProductSales_lotId_fkey" FOREIGN KEY ("lotId") REFERENCES "Lot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

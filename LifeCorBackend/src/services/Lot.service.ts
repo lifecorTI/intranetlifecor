@@ -1,31 +1,37 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 import { ILotCreate } from "../types/lot";
-import { dateFormatterPTBRtoJS } from "../utils/dateFormatterPTBRtoJS";
 
 class LotService {
-  async create(lot: ILotCreate) {
-    const lotProductExists = await prismaClient.lot.findFirst({
+  async create(data: ILotCreate) {
+    const lotName = data.lot.map((l) => l.name);
+
+    const lotProductExists = await prisma.lot.findMany({
       where: {
-        productId: lot.productId,
+        name: {
+          in: lotName,
+        },
       },
     });
-
-    if (lotProductExists) {
-      throw new AppError("productId exists", 409);
+    if (lotProductExists.length > 0) {
+      throw new AppError("lote já existe na base de dados");
     }
 
-    const data = await prismaClient.lot.create({
-      data: {
-        name: lot.name,
-        dueDate: dateFormatterPTBRtoJS(lot.dueDate),
-        productId: lot.productId,
-        qtd: lot.qtd,
+    const response = await prisma.lot.createMany({
+      data: data.lot,
+    });
+
+    return response;
+  }
+
+  async delete(id: string) {
+    await prisma.lot.delete({
+      where: {
+        id: id,
       },
     });
 
-    return data;
+    return "lot delete success";
   }
 }
-
 export { LotService };

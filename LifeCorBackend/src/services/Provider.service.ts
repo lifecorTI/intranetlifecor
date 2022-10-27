@@ -1,10 +1,10 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 import { IProviderCreate } from "../types/provider";
 
 class ProviderService {
   async create({ name, email, phone }: IProviderCreate) {
-    const providerExists = await prismaClient.provider.findFirst({
+    const providerExists = await prisma.provider.findFirst({
       where: {
         name,
       },
@@ -14,7 +14,7 @@ class ProviderService {
       throw new AppError("Provider already exists", 409);
     }
 
-    const data = await prismaClient.provider.create({
+    const data = await prisma.provider.create({
       data: {
         name: name,
         email: email,
@@ -26,7 +26,7 @@ class ProviderService {
   }
 
   async findMany() {
-    const res = await prismaClient.provider.findMany();
+    const res = await prisma.provider.findMany();
 
     return res;
   }

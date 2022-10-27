@@ -1,9 +1,9 @@
 import { AppError } from "../errors/AppError";
-import { prismaClient } from "../prisma";
+import { prisma } from "../prisma";
 
 class CategoryService {
   async create(name: string) {
-    const categoryExists = await prismaClient.category.findFirst({
+    const categoryExists = await prisma.category.findFirst({
       where: {
         name,
       },
@@ -13,7 +13,7 @@ class CategoryService {
       throw new AppError("category already exists", 409);
     }
 
-    const data = await prismaClient.category.create({
+    const data = await prisma.category.create({
       data: {
         name: name,
       },
@@ -23,7 +23,7 @@ class CategoryService {
   }
 
   async findMany() {
-    const categories = await prismaClient.category.findMany();
+    const categories = await prisma.category.findMany();
 
     return categories;
   }

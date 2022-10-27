@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -15,8 +15,8 @@ model User {
   name       String
   isAdmin    Boolean
   password   String
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @default(now())
+  createdAt  DateTime?    @default(now())
+  updatedAt  DateTime?    @default(now())
   Patient    Patient[]
   Sales      Sales[]
   Procedures Procedures[]
@@ -38,7 +38,7 @@ model Patient {
   municipality String
   motherName   String?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   User       User         @relation(fields: [userId], references: [id])
   userId     String
@@ -50,13 +50,15 @@ model Procedures {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
+  origin    String
 
-  Patient   Patient @relation(fields: [patientId], references: [id])
+  patient   Patient @relation(fields: [patientId], references: [id])
   patientId String
-  Doctor    Doctor  @relation(fields: [doctorId], references: [id])
+  doctor    Doctor  @relation(fields: [doctorId], references: [id])
   doctorId  String
-  User      User    @relation(fields: [userId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   userId    String
+  sales     Sales[]
 }
 
 model Doctor {
@@ -64,7 +66,7 @@ model Doctor {
   name           String
   specialization String
   location       String
-  Procedures     Procedures[]
+  procedures     Procedures[]
 }
 
 model Provider {
@@ -73,30 +75,31 @@ model Provider {
   email     String
   phone     String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
-  Product   Product[]
+  updatedAt DateTime  @updatedAt
+  product   Product[]
 }
 
 model Category {
   id      String    @id @default(uuid())
   name    String
-  Product Product[]
+  product Product[]
 }
 
 model Product {
   id         String  @id @default(uuid())
   name       String
+  ref        String
   length     String?
   price      Float
   pricePt    Float
   isCosigned Boolean
 
-  Provider     Provider?      @relation(fields: [providerId], references: [id])
+  provider     Provider?      @relation(fields: [providerId], references: [id])
   providerId   String?
-  Category     Category?      @relation(fields: [categoryId], references: [id])
+  category     Category?      @relation(fields: [categoryId], references: [id])
   categoryId   String?
-  ProductSales ProductSales[]
-  Lot          Lot[]
+  productSales ProductSales[]
+  lot          Lot[]
 }
 
 model Lot {
@@ -105,32 +108,35 @@ model Lot {
   dueDate   DateTime
   qtd       Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  Product   Product     @relation(fields: [productId], references: [id])
-  productId String
+  product      Product        @relation(fields: [productId], references: [id])
+  productId    String
+  productSales ProductSales[]
 }
-
-
 
 model Sales {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  User         User           @relation(fields: [userId], references: [id])
+  user         User           @relation(fields: [userId], references: [id])
   userId       String
-  Patient      Patient        @relation(fields: [patientId], references: [id])
+  patient      Patient        @relation(fields: [patientId], references: [id])
   patientId    String
-  ProductSales ProductSales[]
+  procedures   Procedures     @relation(fields: [proceduresId], references: [id])
+  proceduresId String
+  productSales ProductSales[]
 }
 
 model ProductSales {
   id  String @id @default(uuid())
   qtd Int
 
-  Product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   productId String
-  Sales     Sales   @relation(fields: [salesId], references: [id])
+  sales     Sales   @relation(fields: [salesId], references: [id])
   salesId   String
+  lot       Lot     @relation(fields: [lotId], references: [id])
+  lotId     String
 }

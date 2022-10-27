@@ -10,6 +10,15 @@ class Lot {
 
     return res.status(201).json({ message: "created success!", lot: lot });
   }
+
+  async delete(req: Request, res: Response) {
+    const lotService = new LotService();
+    const { id } = req.body;
+
+    const data = await lotService.delete(id);
+
+    return res.status(200).json(data);
+  }
 }
 
 export { Lot };
