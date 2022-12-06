@@ -12,6 +12,7 @@ class ProductsService {
         name: product.name,
         length: product.length,
         providerId: product.providerId,
+        isCosigned: product.isCosigned,
       },
     });
 
