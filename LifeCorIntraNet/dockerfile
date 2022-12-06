@@ -1,0 +1,17 @@
+FROM node:16
+
+ENV PORT=2016
+
+EXPOSE 2016
+
+WORKDIR /app
+
+COPY [ "package.json", "yarn.lock" ] .
+
+RUN yarn
+
+COPY . .
+
+USER node
+
+CMD ["yarn", "build"]

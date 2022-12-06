@@ -1,10 +1,17 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/header";
 import Patients from "../../components/patients";
 import SideBar from "../../components/sideBar";
 
 function home() {
-  useEffect(() => {}, []);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = "Bearer" + " " + localStorage.getItem("@lifeCor:token");
+    if (!token) {
+      navigate("/");
+    }
+  }, []);
   return (
     <div className="h-full">
       <Header />

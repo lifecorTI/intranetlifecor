@@ -15,6 +15,7 @@ import EditProductModal from "./components/editProductModal";
 import { UserProvider } from "./context/user";
 import LotModal from "./components/lotCreateModal";
 import ListProductByPatient from "./pages/farmacia/listProductByPatient";
+import AddNfe from "./pages/farmacia/addNfe";
 
 function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ function AppRoutes() {
               path="/listProductByPatient"
               element={<ListProductByPatient />}
             />
+            <Route path="/addNfe" element={<AddNfe />} />
             <Route path="/listProduct" element={<ListProducts />}>
               <Route path=":id" element={<EditProductModal />} />
               <Route path="createLot/:id" element={<LotModal />} />

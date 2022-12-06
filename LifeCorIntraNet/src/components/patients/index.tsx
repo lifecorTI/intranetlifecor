@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiGet } from "../../service/api";
 
 import { PlusCircle } from "phosphor-react";
 import PatientCreateModal from "../patientCreateModal";
 import { IPatient } from "./interface";
-import { authContext } from "../../context/auth/authContext";
+import { useNavigate } from "react-router-dom";
 
 function Patient() {
   const [patient, setPatient] = useState<IPatient[]>([]);
   const [show, setShow] = useState(false);
-  const { errorToken } = useContext(authContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const res = async () => {

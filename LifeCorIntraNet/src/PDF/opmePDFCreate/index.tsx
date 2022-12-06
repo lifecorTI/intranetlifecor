@@ -8,7 +8,6 @@ class OpmePDF extends React.Component<{
   render() {
     const { props } = this.props;
 
-    console.log(props);
     return (
       <div className="flex flex-col w-full items-center overflow-hidden h-screen max-w-[768px]">
         <div className="bg-bg-lifecor p-10 bg-cover bg-no-repeat w-full text-xs font-thin ">

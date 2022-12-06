@@ -2,7 +2,6 @@ import { createContext, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiPost } from "../../service/api";
 import { toast } from "react-toastify";
-import { decode } from "jsonwebtoken";
 
 interface IUser {
   name: string;
@@ -17,7 +16,6 @@ interface IUserSign {
 interface IAuthContext {
   signIn: (user: IUserSign) => void;
   signOut: () => void;
-  errorToken: () => void;
 }
 
 interface AuthProvider {
@@ -50,22 +48,8 @@ export function AuthProvider(props: AuthProvider) {
     navigate("/");
   }
 
-  function errorToken() {
-    const token = localStorage.getItem("@lifeCor:token") || "{}";
-
-    // const decoded = decode(token);
-
-    // console.log(decoded);
-
-    // localStorage.removeItem("@lifeCor:token");
-    // localStorage.removeItem("@lifeCor:user");
-
-    // toast.error("algo de errado com token");
-    // navigate("/");
-  }
-
   return (
-    <authContext.Provider value={{ signIn, signOut, errorToken }}>
+    <authContext.Provider value={{ signIn, signOut }}>
       {props.children}
     </authContext.Provider>
   );

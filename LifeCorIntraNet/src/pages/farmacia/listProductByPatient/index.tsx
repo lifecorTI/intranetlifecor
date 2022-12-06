@@ -17,8 +17,20 @@ function ListProductByPatient() {
 
   console.log(patient);
   return (
-    <div className="flex flex-col min-h-full w-full justify-center items-center">
+    <div className="flex flex-col min-h-full w-full items-center">
       <Header />
+      {/* <div className="text-white p-3 rounded-sm flex bg-black bg-opacity-50 w-96">
+        <div className="flex h-6 w-full gap-1 text-black">
+          <label htmlFor="dateIn" className="text-white">
+            Início
+          </label>
+          <input type="date" name="dateIn" id="" />{" "}
+          <label htmlFor="dateOut" className="text-white">
+            termino
+          </label>
+          <input type="date" name="dateOut" id="" defaultValue={Date.now()} />
+        </div>
+      </div> */}
       <div className="container w-full h-full p-10 just bg-white ">
         {patient.map((p) => {
           return (
