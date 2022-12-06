@@ -1,4 +1,8 @@
 import { Router } from "express";
+
+import uploadConfig from "./config/upload";
+import multer from "multer";
+
 import { ensureAuthenticated } from "./middleware/ensureAuthentication.middleware";
 import { Category } from "./controllers/Category.controller";
 import { Doctor } from "./controllers/Doctor.controller";
@@ -11,8 +15,10 @@ import { Provider } from "./controllers/Provider.controller";
 import { Sales } from "./controllers/Sales.controller";
 import { Session } from "./controllers/Session.controller";
 import { User } from "./controllers/User.controller";
+import { NfeController } from "./controllers/Nfe.controller";
 
 const routes = Router();
+const upload = multer(uploadConfig);
 
 const session = new Session();
 const procedures = new Procedures();
@@ -26,6 +32,7 @@ const lot = new Lot();
 const doctor = new Doctor();
 const sales = new Sales();
 const productSales = new ProductSales();
+const nfe = new NfeController();
 
 //POST
 //session
@@ -41,6 +48,7 @@ routes.post("/doctor", ensureAuthenticated, doctor.create);
 routes.post("/procedures", ensureAuthenticated, procedures.create);
 routes.post("/sales", ensureAuthenticated, sales.create);
 routes.post("/productSales", ensureAuthenticated, productSales.create);
+routes.post("/nfe", upload.single("content"), ensureAuthenticated, nfe.create);
 //update
 routes.post("/updateProduct", ensureAuthenticated, product.update);
 //GET
@@ -55,6 +63,7 @@ routes.get("/providers", ensureAuthenticated, provider.findMany);
 routes.get("/category", category.findMany);
 routes.get("/sales", ensureAuthenticated, sales.findMany);
 routes.get("/productSales", ensureAuthenticated, productSales.findMany);
+routes.get("/nfe", nfe.findMany);
 
 //DELETE
 routes.delete("/lot", ensureAuthenticated, lot.delete);

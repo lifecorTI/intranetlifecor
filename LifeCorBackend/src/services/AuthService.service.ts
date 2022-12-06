@@ -26,13 +26,13 @@ class AuthService {
       process.env.SECRET_KEY!,
       {
         subject: user.id,
-        expiresIn: "1d",
+        expiresIn: "1312312893123d",
       }
     );
 
     const userData = {
       name: user.name,
-      isAdmin: user.isAdmin,
+      createdAt: user.createdAt,
       id: user.id,
     };
 

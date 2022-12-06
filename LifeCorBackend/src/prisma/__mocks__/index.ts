@@ -10,6 +10,7 @@ const generateDatabaseURL = (schema: string) => {
   }
   const url = new URL(process.env.DATABASE_URL);
   url.searchParams.append("schema", schema);
+  console.log(url);
   return url.toString();
 };
 

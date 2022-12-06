@@ -26,7 +26,6 @@ class DoctorService {
 
   async findMany() {
     const doctors = await prisma.doctor.findMany();
-
     return doctors;
   }
 }

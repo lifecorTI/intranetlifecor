@@ -20,6 +20,7 @@ model User {
   Patient    Patient[]
   Sales      Sales[]
   Procedures Procedures[]
+  Nfe        Nfe[]
 }
 
 model Patient {
@@ -139,4 +140,14 @@ model ProductSales {
   salesId   String
   lot       Lot     @relation(fields: [lotId], references: [id])
   lotId     String
+}
+
+model Nfe {
+  id        String             @id @default(uuid())
+  name      String
+  content   Unsupported("xml")
+  createdAt DateTime           @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
